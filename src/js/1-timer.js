@@ -11,11 +11,10 @@ const hourTime = document.querySelector('span[data-hours]');
 const minuteTime = document.querySelector('span[data-minutes]');
 const secondTime = document.querySelector('span[data-seconds]');
 
-
-
 let userSelectedDate;
 
-
+btn.disabled = true;
+input.disabled = false;
 
 const options = {
   enableTime: true,
@@ -24,17 +23,51 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
       if (selectedDates[0].getTime() > Date.now()) {
-          userSelectedDate = selectedDates[0].getTime();
+        userSelectedDate = selectedDates[0].getTime();
+        btn.disabled = false;
+        btn.classList.remove('disabled');
          
       } else {
           iziToast.show({
-              message: 'Welcome!',
+              message: 'Please choose a date in the future!',
               close: false,
               closeOnClick: true,
           })
+        btn.disabled = true;
+        btn.classList.add('disabled')
     }
   },
 };
+
+flatpickr('#datetime-picker', options);
+btn.addEventListener('click', elem => {
+  const timer = setInterval(() => {
+    const diff = userSelectedDate - Date.now();
+    const timeValue = convertMs(diff);
+    if (diff <= 0) {
+      clearInterval(timer);
+      btn.disabled = false;
+      btn.classList.remove('disabled');
+      input.disabled = false;
+      input.classList.remove('disabled');
+    } else {
+      dayTime.textContent = addLeadingZero(timeValue.days);
+      hourTime.textContent = addLeadingZero(timeValue.hours);
+      minuteTime.textContent = addLeadingZero(timeValue.minutes);
+      secondTime.textContent = addLeadingZero(timeValue.seconds);
+    }
+  }, 1000);
+  btn.disabled = true;
+  btn.classList.add('disabled');
+  input.disabled = true;
+  input.classList.add('disabled');
+});
+
+function addLeadingZero(value) {
+  value = String(value);
+  return value.length < 2 ? value.padStart(2, '0') : value;
+}
+
 
 function convertMs(ms) {
   
