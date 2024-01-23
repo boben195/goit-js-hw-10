@@ -3,11 +3,7 @@ import "izitoast/dist/css/iziToast.min.css";
 
 const form = document.querySelector('.form');
 
-
-
-
 form.addEventListener('submit', getSub);
-
 
 function getSub(event) {
   event.preventDefault();
